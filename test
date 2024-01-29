@@ -1,0 +1,24 @@
+import cvxpy as cvx
+
+limit = 100000
+m = cvx.Variable()
+w = cvx.Variable()
+
+obj = cvx.Maximize(0.4*m - 0.2*w)
+
+constraints = [m <= 55000,
+               w <= 70000,
+               2*w <= 3*m,
+               3*m - 2*w + 0.000012*w**2 <= limit]
+
+prob = cvx.Problem(obj, constraints)
+prob.solve()
+
+print('Waste limit = %0.2f kg/week' % limit)
+print('Objective = $%0.2f' % obj.value)
+print('m = %0.2f kg metal/week' % m.value)
+print('w = %0.2f m^3 wastewater/week' % w.value)
+for i, constraint in enumerate(constraints):
+    print('Constraint %(constraint)i Shadow Price \
+    = %(dual)0.2f' % {"constraint": i+1, "dual": constraint.dual_value})
+     
